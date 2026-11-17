@@ -19,11 +19,22 @@ class ProjectController extends Controller
         ];
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $projects = Project::with('client')->latest()->get();
+        $q = $request->query('q');
 
-        return view('projects.index', compact('projects'));
+        $projects = Project::with('client')
+            ->when($q, function ($query, $q) {
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('title', 'like', "%{$q}%")
+                        ->orWhere('description', 'like', "%{$q}%")
+                        ->orWhere('category', 'like', "%{$q}%");
+                });
+            })
+            ->latest()
+            ->get();
+
+        return view('projects.index', compact('projects', 'q'));
     }
 
     public function create()
