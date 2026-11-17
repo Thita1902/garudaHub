@@ -14,7 +14,7 @@
         .btn { background: #2563eb; color: #fff; padding: 8px 14px; border-radius: 4px; text-decoration: none; font-size: 14px; }
         .card { background: #fff; padding: 20px; border-radius: 8px; margin-top: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
         .card h3 { margin: 0 0 6px; }
-        .card h3 a { color: #111827; text-decoration: none; }
+        .card h3 a { color: #111827; text-decoration: underline; }
         .meta { font-size: 13px; color: #6b7280; }
         .badge { display: inline-block; background: #dbeafe; color: #1e40af; padding: 2px 10px; border-radius: 12px; font-size: 12px; }
         .success { background: #dcfce7; color: #166534; padding: 10px 14px; border-radius: 4px; margin-top: 16px; }
