@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BidController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\RatingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,4 +28,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/projects/{project}/bids', [BidController::class, 'store'])->name('bids.store');
     Route::post('/bids/{bid}/accept', [BidController::class, 'accept'])->name('bids.accept');
+
+    Route::get('/projects/{project}/rating', [RatingController::class, 'create'])->name('ratings.create');
+    Route::post('/projects/{project}/rating', [RatingController::class, 'store'])->name('ratings.store');
 });
