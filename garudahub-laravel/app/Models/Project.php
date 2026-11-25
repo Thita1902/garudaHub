@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Project extends Model
 {
@@ -23,15 +23,18 @@ class Project extends Model
         'deadline' => 'date',
     ];
 
-    // Satu proyek dimiliki satu klien (user)
     public function client(): BelongsTo
     {
         return $this->belongsTo(User::class, 'client_id');
     }
 
-    // Satu proyek punya banyak penawaran
     public function bids(): HasMany
     {
         return $this->hasMany(Bid::class);
+    }
+
+    public function rating(): HasOne
+    {
+        return $this->hasOne(Rating::class);
     }
 }

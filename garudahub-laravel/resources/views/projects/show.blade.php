@@ -50,12 +50,14 @@
         @if (session('success'))
             <div class="success">{{ session('success') }}</div>
         @endif
+
         @error('bid')
             <div class="error-box">{{ $message }}</div>
         @enderror
 
         <div class="card">
             <h1>{{ $project->title }}</h1>
+
             <div class="meta">
                 Oleh {{ $project->client->name }}<br>
                 Kategori: {{ $project->category }}<br>
@@ -63,16 +65,24 @@
                 Deadline: {{ $project->deadline->format('d M Y') }}<br>
                 Status: <span class="badge">{{ $project->status }}</span>
             </div>
+
             <p>{!! nl2br(e($project->description)) !!}</p>
 
             @if (auth()->id() === $project->client_id)
                 <div class="actions">
                     <a class="btn" href="{{ route('projects.edit', $project) }}">Edit</a>
+
                     <form method="POST" action="{{ route('projects.destroy', $project) }}" onsubmit="return confirm('Yakin hapus proyek ini?')">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-red">Hapus</button>
                     </form>
+
+                    @if ($project->status === 'awarded')
+                        <a class="btn btn-green" href="{{ route('ratings.create', $project) }}">
+                            Beri Rating
+                        </a>
+                    @endif
                 </div>
             @endif
         </div>
@@ -85,19 +95,24 @@
         @if ($isDeveloper && $project->status === 'open' && ! $sudahMenawar)
             <div class="card">
                 <h2>Ajukan Penawaran</h2>
+
                 <form method="POST" action="{{ route('bids.store', $project) }}">
                     @csrf
+
                     <div class="row">
                         <div>
                             <label for="price">Harga (Rp)</label>
                             <input type="number" id="price" name="price" value="{{ old('price') }}" min="0" required>
+
                             @error('price')
                                 <div class="error">{{ $message }}</div>
                             @enderror
                         </div>
+
                         <div>
                             <label for="duration_days">Durasi (hari)</label>
                             <input type="number" id="duration_days" name="duration_days" value="{{ old('duration_days') }}" min="1" required>
+
                             @error('duration_days')
                                 <div class="error">{{ $message }}</div>
                             @enderror
@@ -106,6 +121,7 @@
 
                     <label for="proposal">Proposal</label>
                     <textarea id="proposal" name="proposal" required>{{ old('proposal') }}</textarea>
+
                     @error('proposal')
                         <div class="error">{{ $message }}</div>
                     @enderror
@@ -118,25 +134,35 @@
         @endif
 
         @if ($sudahMenawar)
-            <div class="card"><p class="meta">Kamu sudah mengajukan penawaran untuk proyek ini.</p></div>
+            <div class="card">
+                <p class="meta">Kamu sudah mengajukan penawaran untuk proyek ini.</p>
+            </div>
         @endif
 
         <div class="card">
             <h2>Penawaran ({{ $project->bids->count() }})</h2>
+
             @forelse ($project->bids as $bid)
                 <div class="bid">
                     <strong>{{ $bid->developer->name }}</strong>
-                    <span class="badge {{ $bid->status === 'accepted' ? 'badge-green' : ($bid->status === 'rejected' ? 'badge-red' : '') }}">{{ $bid->status }}</span>
+
+                    <span class="badge {{ $bid->status === 'accepted' ? 'badge-green' : ($bid->status === 'rejected' ? 'badge-red' : '') }}">
+                        {{ $bid->status }}
+                    </span>
+
                     <div class="meta">
                         Harga: Rp {{ number_format($bid->price, 0, ',', '.') }}
                         &bull; Durasi: {{ $bid->duration_days }} hari
                     </div>
+
                     <p>{!! nl2br(e($bid->proposal)) !!}</p>
 
                     @if (auth()->id() === $project->client_id && $project->status === 'open')
                         <form method="POST" action="{{ route('bids.accept', $bid) }}" onsubmit="return confirm('Pilih penawaran ini sebagai pemenang?')">
                             @csrf
-                            <button type="submit" class="btn btn-green">Pilih Pemenang</button>
+                            <button type="submit" class="btn btn-green">
+                                Pilih Pemenang
+                            </button>
                         </form>
                     @endif
                 </div>
